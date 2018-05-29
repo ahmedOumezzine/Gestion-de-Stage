@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TypeSoutanance
  *
- * @ORM\Table(name="type_soutanance")
+ * @ORM\Table(name="type_soutanancea")
  * @ORM\Entity
  */
 class TypeSoutanance

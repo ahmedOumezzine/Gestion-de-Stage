@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TypeStage
  *
- * @ORM\Table(name="type_stage")
+ * @ORM\Table(name="type_stagea")
  * @ORM\Entity
  */
 class TypeStage

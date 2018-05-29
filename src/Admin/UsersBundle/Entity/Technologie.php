@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Technologie
  *
- * @ORM\Table(name="technologie")
+ * @ORM\Table(name="technologiea")
  * @ORM\Entity
  */
 class Technologie

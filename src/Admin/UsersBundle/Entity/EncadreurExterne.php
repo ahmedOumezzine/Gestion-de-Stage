@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * EncadreurExterne
  *
- * @ORM\Table(name="encadreur_externe", indexes={@ORM\Index(name="Id_Societe", columns={"Id_Societe"}), @ORM\Index(name="NCIN", columns={"NCIN"})})
+ * @ORM\Table(name="encadreur_externea", indexes={@ORM\Index(name="Id_Societe", columns={"Id_Societe"}), @ORM\Index(name="NCIN", columns={"NCIN"})})
  * @ORM\Entity
  */
 class EncadreurExterne

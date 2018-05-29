@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
 * @ORM\Entity
-* @ORM\Table(name="tuto_user")
+* @ORM\Table(name="tuto_usera")
 */
 class User extends BaseUser
 {

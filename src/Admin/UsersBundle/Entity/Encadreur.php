@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Encadreur
  *
- * @ORM\Table(name="encadreur")
+ * @ORM\Table(name="encadreura")
  * @ORM\Entity
  */
 class Encadreur
