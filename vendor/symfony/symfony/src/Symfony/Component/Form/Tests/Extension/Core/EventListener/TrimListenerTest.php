@@ -11,15 +11,16 @@
 
 namespace Symfony\Component\Form\Tests\Extension\Core\EventListener;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\EventListener\TrimListener;
 
-class TrimListenerTest extends \PHPUnit_Framework_TestCase
+class TrimListenerTest extends TestCase
 {
     public function testTrim()
     {
         $data = ' Foo! ';
-        $form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $form = $this->getMockBuilder('Symfony\Component\Form\Test\FormInterface')->getMock();
         $event = new FormEvent($form, $data);
 
         $filter = new TrimListener();
@@ -31,7 +32,7 @@ class TrimListenerTest extends \PHPUnit_Framework_TestCase
     public function testTrimSkipNonStrings()
     {
         $data = 1234;
-        $form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $form = $this->getMockBuilder('Symfony\Component\Form\Test\FormInterface')->getMock();
         $event = new FormEvent($form, $data);
 
         $filter = new TrimListener();
@@ -55,7 +56,7 @@ class TrimListenerTest extends \PHPUnit_Framework_TestCase
         $symbol = mb_convert_encoding($binary, 'UTF-8', 'UCS-2BE');
         $symbol = $symbol."ab\ncd".$symbol;
 
-        $form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $form = $this->getMockBuilder('Symfony\Component\Form\Test\FormInterface')->getMock();
         $event = new FormEvent($form, $symbol);
 
         $filter = new TrimListener();

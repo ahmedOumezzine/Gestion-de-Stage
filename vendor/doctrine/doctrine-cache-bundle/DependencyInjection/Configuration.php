@@ -1,22 +1,4 @@
 <?php
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
-
 namespace Doctrine\Bundle\DoctrineCacheBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -74,7 +56,6 @@ class Configuration implements ConfigurationInterface
     public function getProviderNames(NodeInterface $tree)
     {
         foreach ($tree->getChildren() as $providers) {
-
             if ($providers->getName() !== 'providers') {
                 continue;
             }
@@ -117,6 +98,7 @@ class Configuration implements ConfigurationInterface
                 $options = reset($params);
                 $conf    = array(
                     'type'            => 'custom_provider',
+                    'namespace' => isset($conf['namespace']) ? $conf['namespace'] : null ,
                     'custom_provider' => array(
                         'type'      => $conf['type'],
                         'options'   => $options ?: null,
@@ -176,6 +158,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('namespace')->defaultNull()->end()
                             ->scalarNode('type')->defaultNull()->end()
                             ->append($this->addBasicProviderNode('apc'))
+                            ->append($this->addBasicProviderNode('apcu'))
                             ->append($this->addBasicProviderNode('array'))
                             ->append($this->addBasicProviderNode('void'))
                             ->append($this->addBasicProviderNode('wincache'))
@@ -190,6 +173,7 @@ class Configuration implements ConfigurationInterface
                             ->append($this->addPhpFileNode())
                             ->append($this->addMongoNode())
                             ->append($this->addRedisNode())
+                            ->append($this->addPredisNode())
                             ->append($this->addRiakNode())
                             ->append($this->addSqlite3Node())
                         ->end()
@@ -284,6 +268,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('connection_id')->defaultNull()->end()
                 ->arrayNode('servers')
                 ->useAttributeAsKey('host')
+                ->normalizeKeys(false)
                     ->prototype('array')
                         ->beforeNormalization()
                             ->ifTrue(function ($v) {
@@ -326,8 +311,10 @@ class Configuration implements ConfigurationInterface
             ->fixXmlConfig('server')
             ->children()
                 ->scalarNode('connection_id')->defaultNull()->end()
+                ->scalarNode('persistent_id')->defaultNull()->end()
                 ->arrayNode('servers')
                 ->useAttributeAsKey('host')
+                ->normalizeKeys(false)
                     ->prototype('array')
                         ->beforeNormalization()
                             ->ifTrue(function ($v) {
@@ -372,6 +359,37 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('password')->defaultNull()->end()
                 ->scalarNode('timeout')->defaultNull()->end()
                 ->scalarNode('database')->defaultNull()->end()
+                ->booleanNode('persistent')->defaultFalse()->end()
+            ->end()
+        ;
+
+        return $node;
+    }
+
+    /**
+     * Build predis node configuration definition
+     *
+     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder
+     */
+    private function addPredisNode()
+    {
+        $builder = new TreeBuilder();
+        $node    = $builder->root('predis');
+
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('client_id')->defaultNull()->end()
+                ->scalarNode('scheme')->defaultValue('tcp')->end()
+                ->scalarNode('host')->defaultValue('%doctrine_cache.redis.host%')->end()
+                ->scalarNode('port')->defaultValue('%doctrine_cache.redis.port%')->end()
+                ->scalarNode('password')->defaultNull()->end()
+                ->scalarNode('timeout')->defaultNull()->end()
+                ->scalarNode('database')->defaultNull()->end()
+                ->arrayNode('options')
+                  ->useAttributeAsKey('name')
+                  ->prototype('scalar')->end()
+                ->end()
             ->end()
         ;
 

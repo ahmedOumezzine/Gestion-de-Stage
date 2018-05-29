@@ -54,8 +54,6 @@ class DigestAuthenticationListener implements ListenerInterface
     /**
      * Handles digest authentication.
      *
-     * @param GetResponseEvent $event A GetResponseEvent instance
-     *
      * @throws AuthenticationServiceException
      */
     public function handle(GetResponseEvent $event)
@@ -120,6 +118,8 @@ class DigestAuthenticationListener implements ListenerInterface
             $this->logger->info('Digest authentication successful.', array('username' => $digestAuth->getUsername(), 'received' => $digestAuth->getResponse()));
         }
 
+        $this->migrateSession($request);
+
         $this->tokenStorage->setToken(new UsernamePasswordToken($user, $user->getPassword(), $this->providerKey));
     }
 
@@ -135,6 +135,18 @@ class DigestAuthenticationListener implements ListenerInterface
         }
 
         $event->setResponse($this->authenticationEntryPoint->start($request, $authException));
+    }
+
+    private function migrateSession(Request $request)
+    {
+        if (!$request->hasSession() || !$request->hasPreviousSession()) {
+            return;
+        }
+
+        // Destroying the old session is broken in php 5.4.0 - 5.4.10
+        // See https://bugs.php.net/63379
+        $destroy = \PHP_VERSION_ID < 50400 || \PHP_VERSION_ID >= 50411;
+        $request->getSession()->migrate($destroy);
     }
 }
 
@@ -171,10 +183,8 @@ class DigestData
             throw new BadCredentialsException(sprintf('Missing mandatory digest value; received header "%s" (%s)', $this->header, implode(', ', $keys)));
         }
 
-        if ('auth' === $this->elements['qop']) {
-            if (!isset($this->elements['nc']) || !isset($this->elements['cnonce'])) {
-                throw new BadCredentialsException(sprintf('Missing mandatory digest value; received header "%s"', $this->header));
-            }
+        if ('auth' === $this->elements['qop'] && !isset($this->elements['nc'], $this->elements['cnonce'])) {
+            throw new BadCredentialsException(sprintf('Missing mandatory digest value; received header "%s"', $this->header));
         }
 
         if ($expectedRealm !== $this->elements['realm']) {
@@ -208,7 +218,7 @@ class DigestData
         } elseif ('auth' === $this->elements['qop']) {
             $digest .= ':'.$this->elements['nc'].':'.$this->elements['cnonce'].':'.$this->elements['qop'];
         } else {
-            throw new \InvalidArgumentException('This method does not support a qop: "%s".', $this->elements['qop']);
+            throw new \InvalidArgumentException(sprintf('This method does not support a qop: "%s".', $this->elements['qop']));
         }
         $digest .= ':'.$a2Md5;
 

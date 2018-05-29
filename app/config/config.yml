@@ -83,3 +83,7 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: Admin\UsersBundle\Entity\User
+    ## To solve the problem
+    from_email:
+        address: "noreply@yourcompany.com"
+        sender_name: "No Reply"

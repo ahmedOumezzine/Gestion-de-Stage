@@ -14,6 +14,7 @@ namespace Symfony\Bundle\TwigBundle\CacheWarmer;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\CacheWarmer\TemplateFinderInterface;
+use Twig\Error\Error;
 
 /**
  * Generates the Twig cache for all templates.
@@ -28,12 +29,6 @@ class TemplateCacheCacheWarmer implements CacheWarmerInterface
     protected $container;
     protected $finder;
 
-    /**
-     * Constructor.
-     *
-     * @param ContainerInterface           $container The dependency injection container
-     * @param TemplateFinderInterface|null $finder    The template paths cache warmer
-     */
     public function __construct(ContainerInterface $container, TemplateFinderInterface $finder = null)
     {
         // We don't inject the Twig environment directly as it depends on the
@@ -65,7 +60,7 @@ class TemplateCacheCacheWarmer implements CacheWarmerInterface
 
             try {
                 $twig->loadTemplate($template);
-            } catch (\Twig_Error $e) {
+            } catch (Error $e) {
                 // problem during compilation, give up
             }
         }

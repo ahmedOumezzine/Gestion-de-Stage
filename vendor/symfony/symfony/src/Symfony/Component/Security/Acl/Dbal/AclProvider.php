@@ -38,14 +38,7 @@ class AclProvider implements AclProviderInterface
 {
     const MAX_BATCH_SIZE = 30;
 
-    /**
-     * @var AclCacheInterface|null
-     */
     protected $cache;
-
-    /**
-     * @var Connection
-     */
     protected $connection;
     protected $loadedAces = array();
     protected $loadedAcls = array();
@@ -56,14 +49,6 @@ class AclProvider implements AclProviderInterface
      */
     private $permissionGrantingStrategy;
 
-    /**
-     * Constructor.
-     *
-     * @param Connection                          $connection
-     * @param PermissionGrantingStrategyInterface $permissionGrantingStrategy
-     * @param array                               $options
-     * @param AclCacheInterface                   $cache
-     */
     public function __construct(Connection $connection, PermissionGrantingStrategyInterface $permissionGrantingStrategy, array $options, AclCacheInterface $cache = null)
     {
         $this->cache = $cache;
@@ -224,8 +209,6 @@ class AclProvider implements AclProviderInterface
      * Constructs the query used for looking up object identities and associated
      * ACEs, and security identities.
      *
-     * @param array $ancestorIds
-     *
      * @return string
      */
     protected function getLookupSql(array $ancestorIds)
@@ -363,13 +346,11 @@ FINDCHILDREN;
      * Constructs the SQL for retrieving the primary key of the given object
      * identity.
      *
-     * @param ObjectIdentityInterface $oid
-     *
      * @return string
      */
     protected function getSelectObjectIdentityIdSql(ObjectIdentityInterface $oid)
     {
-        $query = <<<QUERY
+        $query = <<<'QUERY'
             SELECT o.id
             FROM %s o
             INNER JOIN %s c ON c.id = o.class_id
@@ -388,8 +369,6 @@ QUERY;
     /**
      * Returns the primary key of the passed object identity.
      *
-     * @param ObjectIdentityInterface $oid
-     *
      * @return int
      */
     final protected function retrieveObjectIdentityPrimaryKey(ObjectIdentityInterface $oid)
@@ -399,8 +378,6 @@ QUERY;
 
     /**
      * This method is called when an ACL instance is retrieved from the cache.
-     *
-     * @param AclInterface $acl
      */
     private function updateAceIdentityMap(AclInterface $acl)
     {
@@ -426,8 +403,6 @@ QUERY;
      * Retrieves all the ids which need to be queried from the database
      * including the ids of parent ACLs.
      *
-     * @param array $batch
-     *
      * @return array
      */
     private function getAncestorIds(array $batch)
@@ -447,8 +422,6 @@ QUERY;
     /**
      * Does either overwrite the passed ACE, or saves it in the global identity
      * map to ensure every ACE only gets instantiated once.
-     *
-     * @param array &$aces
      */
     private function doUpdateAceIdentityMap(array &$aces)
     {
@@ -464,10 +437,6 @@ QUERY;
     /**
      * This method is called for object identities which could not be retrieved
      * from the cache, and for which thus a database query is required.
-     *
-     * @param array $batch
-     * @param array $sids
-     * @param array $oidLookup
      *
      * @return \SplObjectStorage mapping object identities to ACL instances
      *
@@ -494,10 +463,6 @@ QUERY;
      *
      * Keep in mind that changes to this method might severely reduce the
      * performance of the entire ACL system.
-     *
-     * @param Statement $stmt
-     * @param array     $oidLookup
-     * @param array     $sids
      *
      * @return \SplObjectStorage
      *

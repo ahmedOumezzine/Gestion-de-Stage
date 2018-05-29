@@ -11,11 +11,12 @@
 
 namespace Symfony\Component\DependencyInjection\Tests\Compiler;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\DecoratorServicePass;
 
-class DecoratorServicePassTest extends \PHPUnit_Framework_TestCase
+class DecoratorServicePassTest extends TestCase
 {
     public function testProcessWithoutAlias()
     {
@@ -80,6 +81,25 @@ class DecoratorServicePassTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->getAlias('foo.extended.inner')->isPublic());
 
         $this->assertNull($fooExtendedDefinition->getDecoratedService());
+    }
+
+    public function testProcessMovesTagsFromDecoratedDefinitionToDecoratingDefinition()
+    {
+        $container = new ContainerBuilder();
+        $container
+            ->register('foo')
+            ->setTags(array('bar' => array('attr' => 'baz')))
+        ;
+        $container
+            ->register('baz')
+            ->setTags(array('foobar' => array('attr' => 'bar')))
+            ->setDecoratedService('foo')
+        ;
+
+        $this->process($container);
+
+        $this->assertEmpty($container->getDefinition('baz.inner')->getTags());
+        $this->assertEquals(array('bar' => array('attr' => 'baz'), 'foobar' => array('attr' => 'bar')), $container->getDefinition('baz')->getTags());
     }
 
     protected function process(ContainerBuilder $container)

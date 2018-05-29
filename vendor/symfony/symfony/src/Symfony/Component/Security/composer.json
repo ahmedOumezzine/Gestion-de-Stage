@@ -17,8 +17,9 @@
     ],
     "require": {
         "php": ">=5.3.9",
+        "paragonie/random_compat": "~1.0",
         "symfony/event-dispatcher": "~2.2",
-        "symfony/http-foundation": "~2.1",
+        "symfony/http-foundation": "~2.7",
         "symfony/http-kernel": "~2.4"
     },
     "replace": {
@@ -31,12 +32,15 @@
         "symfony/finder": "~2.3",
         "symfony/intl": "~2.3",
         "symfony/routing": "~2.2",
-        "symfony/validator": "~2.5,>=2.5.9",
+        "symfony/validator": "~2.7.25|^2.8.18",
         "doctrine/common": "~2.2",
         "doctrine/dbal": "~2.2",
         "psr/log": "~1.0",
         "ircmaxell/password-compat": "~1.0",
         "symfony/expression-language": "~2.6"
+    },
+    "conflict": {
+        "symfony/http-foundation": "<2.7.38|~2.8,<2.8.31"
     },
     "suggest": {
         "symfony/class-loader": "For using the ACL generateSql script",
@@ -46,8 +50,7 @@
         "symfony/routing": "For using the HttpUtils class to create sub-requests, redirect the user, and match URLs",
         "doctrine/dbal": "For using the built-in ACL implementation",
         "symfony/expression-language": "For using the expression voter",
-        "ircmaxell/password-compat": "For using the BCrypt password encoder in PHP <5.5",
-        "paragonie/random_compat": ""
+        "ircmaxell/password-compat": "For using the BCrypt password encoder in PHP <5.5"
     },
     "autoload": {
         "psr-4": { "Symfony\\Component\\Security\\": "" },

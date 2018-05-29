@@ -19,6 +19,7 @@ use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubTranslator;
 use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubFilesystemLoader;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Tests\AbstractBootstrap3HorizontalLayoutTest;
+use Twig\Environment;
 
 class FormExtensionBootstrap3HorizontalLayoutTest extends AbstractBootstrap3HorizontalLayoutTest
 {
@@ -39,7 +40,7 @@ class FormExtensionBootstrap3HorizontalLayoutTest extends AbstractBootstrap3Hori
             'bootstrap_3_horizontal_layout.html.twig',
             'custom_widgets.html.twig',
         ));
-        $renderer = new TwigRenderer($rendererEngine, $this->getMock('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface'));
+        $renderer = new TwigRenderer($rendererEngine, $this->getMockBuilder('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface')->getMock());
 
         $this->extension = new FormExtension($renderer);
 
@@ -48,7 +49,7 @@ class FormExtensionBootstrap3HorizontalLayoutTest extends AbstractBootstrap3Hori
             __DIR__.'/Fixtures/templates/form',
         ));
 
-        $environment = new \Twig_Environment($loader, array('strict_variables' => true));
+        $environment = new Environment($loader, array('strict_variables' => true));
         $environment->addExtension(new TranslationExtension(new StubTranslator()));
         $environment->addExtension($this->extension);
 
@@ -74,7 +75,7 @@ class FormExtensionBootstrap3HorizontalLayoutTest extends AbstractBootstrap3Hori
 
     protected function renderLabel(FormView $view, $label = null, array $vars = array())
     {
-        if ($label !== null) {
+        if (null !== $label) {
             $vars += array('label' => $label);
         }
 
@@ -118,36 +119,36 @@ class FormExtensionBootstrap3HorizontalLayoutTest extends AbstractBootstrap3Hori
 
     public function testRange()
     {
-        // No-op for forward compatibility with AbstractLayoutTest 2.8
+        $this->markTestIncomplete('No-op for forward compatibility with AbstractLayoutTest 2.8');
     }
 
     public function testRangeWithMinMaxValues()
     {
-        // No-op for forward compatibility with AbstractLayoutTest 2.8
+        $this->markTestIncomplete('No-op for forward compatibility with AbstractLayoutTest 2.8');
     }
 
     public function testLabelWithoutTranslationOnButton()
     {
-        // No-op for forward compatibility with AbstractLayoutTest 2.8
+        $this->markTestIncomplete('No-op for forward compatibility with AbstractLayoutTest 2.8');
     }
 
     public function testSingleChoiceWithPlaceholderWithoutTranslation()
     {
-        // No-op for forward compatibility with AbstractLayoutTest 2.8
+        $this->markTestIncomplete('No-op for forward compatibility with AbstractLayoutTest 2.8');
     }
 
     public function testSingleChoiceExpandedWithPlaceholderWithoutTranslation()
     {
-        // No-op for forward compatibility with AbstractLayoutTest 2.8
+        $this->markTestIncomplete('No-op for forward compatibility with AbstractLayoutTest 2.8');
     }
 
     public function testButtonlabelWithoutTranslation()
     {
-        // No-op for forward compatibility with AbstractLayoutTest 2.8
+        $this->markTestIncomplete('No-op for forward compatibility with AbstractLayoutTest 2.8');
     }
 
     public function testAttributesNotTranslatedWhenTranslationDomainIsFalse()
     {
-        // No-op for forward compatibility with AbstractLayoutTest 2.8
+        $this->markTestIncomplete('No-op for forward compatibility with AbstractLayoutTest 2.8');
     }
 }
